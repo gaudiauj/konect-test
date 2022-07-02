@@ -1,5 +1,6 @@
 import React, { useEffect, useReducer, useRef } from "react";
 import css from "./App.module.css";
+import NumberInput from "./component/numberInput/NumberInput";
 
 function App() {
   return (
@@ -7,13 +8,13 @@ function App() {
       <header className={`${css.header}`}>
         <h1>Konect test</h1>
       </header>
-      <form>
-        <input type="text" pattern="[0-9]" placeholder="."></input>
-        <input type="text" pattern="[0-9]" placeholder="."></input>
-        <input type="text" pattern="[0-9]" placeholder="."></input>
-        <input type="text" pattern="[0-9]" placeholder="."></input>
-        <input type="text" pattern="[0-9]" placeholder="."></input>
-        <input type="text" pattern="[0-9]" placeholder="."></input>
+      <form className={`${css.form}`}>
+        <NumberInput onChange={(value) => {}} value={""} />
+        <NumberInput onChange={(value) => {}} value={""} />
+        <NumberInput onChange={(value) => {}} value={""} />
+        <NumberInput onChange={(value) => {}} value={""} />
+        <NumberInput onChange={(value) => {}} value={""} />
+        <NumberInput onChange={(value) => {}} value={""} />
       </form>
     </>
   );
