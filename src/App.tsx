@@ -1,6 +1,7 @@
-import React, { useEffect, useReducer, useRef } from "react";
+import React, { useEffect, useReducer, useRef, useState } from "react";
 import css from "./App.module.css";
 import NumberInput from "./component/numberInput/NumberInput";
+import { validateNumbers } from "./validateNumbers";
 
 type State = {
   numbers: string[];
@@ -27,6 +28,7 @@ const initialState = {
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [error, setError] = useState("");
   const inputRefArray: React.RefObject<HTMLInputElement>[] = state.numbers.map(
     () => useRef(null)
   );
@@ -35,6 +37,25 @@ function App() {
     const nexInput = inputRefArray[state.currentFocus];
     nexInput?.current?.focus();
   }, [state.currentFocus]);
+  const checkNumbers = async () => {
+    if (state.numbers.every((number) => !!number)) {
+      try {
+        const data = await validateNumbers(state.numbers.join(""));
+        if (data.code !== "200") {
+          return setError("Oups le code que tu as saisi est incorrect");
+        }
+        setError("");
+        window.location.href =
+          "http://blogdecarole432.b.l.pic.centerblog.net/tk4d7e63.gif";
+      } catch (e) {
+        return setError("Oups le code que tu as saisi est incorrect");
+      }
+    }
+  };
+
+  useEffect(() => {
+    checkNumbers();
+  }, [state.numbers]);
 
   function onNumberChange(value: string, index: number) {
     dispatch({ type: "changeValue", value, indexToChange: index });
@@ -58,20 +79,24 @@ function App() {
       <form
         className={`${css.form}`}
         onKeyDown={handleKeyDown}
+        onSubmit={checkNumbers}
         onPaste={(e) => {
           e.preventDefault();
           dispatch({ type: "paste", value: e.clipboardData.getData("Text") });
         }}
       >
-        {state.numbers.map((number, index) => (
-          <NumberInput
-            ref={inputRefArray[index]}
-            key={index}
-            onChange={(value) => onNumberChange(value, index)}
-            value={number}
-            disabled={state.currentFocus !== index}
-          />
-        ))}
+        <fieldset>
+          {state.numbers.map((number, index) => (
+            <NumberInput
+              ref={inputRefArray[index]}
+              key={index}
+              onChange={(value) => onNumberChange(value, index)}
+              value={number}
+              disabled={state.currentFocus !== index}
+            />
+          ))}
+        </fieldset>
+        {error && <p className={css.error}>{error}</p>}
       </form>
     </>
   );

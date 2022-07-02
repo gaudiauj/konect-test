@@ -16,7 +16,6 @@ const NumberInput = React.forwardRef(
     function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
       const value = event.target.value;
       const lastChar = value[value.length - 1];
-      console.error(value);
       if (/^[0-9]?$/.test(lastChar)) {
         onChange(lastChar);
       }

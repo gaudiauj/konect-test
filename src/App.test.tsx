@@ -71,4 +71,30 @@ describe("konnect email validator", () => {
       expect(numbersInput[3]).toHaveFocus();
     });
   });
+
+  it("should show an error if the code is wrong", async () => {
+    render(<App />);
+    const numbersInput: HTMLInputElement[] =
+      screen.getAllByPlaceholderText("•");
+    fireEvent.paste(numbersInput[0], "123");
+    await waitFor(() => {
+      expect(numbersInput[0].value).toBe("1");
+      expect(numbersInput[1].value).toBe("2");
+      expect(numbersInput[2].value).toBe("3");
+    });
+    userEvent.keyboard("4");
+    await waitFor(() => {
+      expect(numbersInput[3].value).toBe("4");
+    });
+    userEvent.keyboard("5");
+    await waitFor(() => {
+      expect(numbersInput[4].value).toBe("5");
+    });
+    userEvent.keyboard("5");
+    await waitFor(() => {
+      expect(numbersInput[5].value).toBe("5");
+    });
+    const errorMessage = await screen.findByText(/oups/i);
+    expect(errorMessage).toBeDefined();
+  });
 });
