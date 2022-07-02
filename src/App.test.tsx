@@ -8,4 +8,9 @@ describe.concurrent("konnect email validator", () => {
     render(<App />);
     expect(screen.getByText(/konect/i)).toBeDefined();
   });
+
+  it("should have 6 different input for numbers", () => {
+    render(<App />);
+    expect(screen.getAllByPlaceholderText(".")).toHaveLength(6);
+  });
 });
