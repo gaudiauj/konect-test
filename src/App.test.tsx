@@ -1,8 +1,13 @@
 import App from "./App";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
+
+//clipboardData is not supported on jestDom so we mock the value
+window.clipboardData = {
+  getData: vi.fn(() => "123"),
+};
 
 describe("konnect email validator", () => {
   it("load the app", () => {
@@ -51,6 +56,19 @@ describe("konnect email validator", () => {
     await waitFor(() => {
       expect(numbersInput[1].value).toBe("");
       expect(numbersInput[0].value).toBe("1");
+    });
+  });
+
+  it("should be possible to paste digit", async () => {
+    render(<App />);
+    const numbersInput: HTMLInputElement[] =
+      screen.getAllByPlaceholderText("•");
+    fireEvent.paste(numbersInput[0], "123");
+    await waitFor(() => {
+      expect(numbersInput[0].value).toBe("1");
+      expect(numbersInput[1].value).toBe("2");
+      expect(numbersInput[2].value).toBe("3");
+      expect(numbersInput[3]).toHaveFocus();
     });
   });
 });

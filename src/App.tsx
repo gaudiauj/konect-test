@@ -55,7 +55,14 @@ function App() {
       <header className={`${css.header}`}>
         <h1>Konect test</h1>
       </header>
-      <form className={`${css.form}`} onKeyDown={handleKeyDown}>
+      <form
+        className={`${css.form}`}
+        onKeyDown={handleKeyDown}
+        onPaste={(e) => {
+          e.preventDefault();
+          dispatch({ type: "paste", value: e.clipboardData.getData("Text") });
+        }}
+      >
         {state.numbers.map((number, index) => (
           <NumberInput
             ref={inputRefArray[index]}
@@ -104,7 +111,16 @@ function reducer(state: State, action: Action) {
         currentFocus: getNextFocus(),
       };
     case "paste":
-      return state;
+      const copyValue = action.value;
+      const copiedNumbers = [...state.numbers];
+      for (var i = 0; i < copiedNumbers.length; i++) {
+        copiedNumbers[i] = copyValue[i] || "";
+      }
+      return {
+        ...state,
+        numbers: copiedNumbers,
+        currentFocus: Math.min(copiedNumbers.length, copyValue.length),
+      };
     default:
       throw new Error();
   }
