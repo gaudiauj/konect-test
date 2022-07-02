@@ -4,6 +4,7 @@ import NumberInput from "./component/numberInput/NumberInput";
 
 type State = {
   numbers: string[];
+  currentFocus: number;
 };
 
 type ChangeValueAction = {
@@ -21,10 +22,20 @@ type Action = ChangeValueAction | CopyAction;
 
 const initialState = {
   numbers: ["", "", "", "", "", ""],
+  currentFocus: 0,
 };
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const inputRefArray: React.RefObject<HTMLInputElement>[] = state.numbers.map(
+    () => useRef(null)
+  );
+
+  useEffect(() => {
+    const nexInput = inputRefArray[state.currentFocus];
+    nexInput?.current?.focus();
+  }, [state.currentFocus]);
+
   function onNumberChange(value: string, index: number) {
     dispatch({ type: "changeValue", value, indexToChange: index });
   }
@@ -36,9 +47,11 @@ function App() {
       <form className={`${css.form}`}>
         {state.numbers.map((number, index) => (
           <NumberInput
+            ref={inputRefArray[index]}
             key={index}
             onChange={(value) => onNumberChange(value, index)}
             value={number}
+            disabled={state.currentFocus !== index}
           />
         ))}
       </form>
@@ -55,6 +68,7 @@ function reducer(state: State, action: Action) {
       return {
         ...state,
         numbers: newNumbers,
+        currentFocus: state.currentFocus + 1,
       };
     case "paste":
       return state;

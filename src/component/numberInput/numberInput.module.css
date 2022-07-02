@@ -6,3 +6,12 @@
   margin-right: 5px;
   border-radius: 5px;
 }
+
+.input:disabled {
+  background-color: #ffffff;
+  color: #000;
+}
+
+input:focus::placeholder {
+  color: transparent;
+}

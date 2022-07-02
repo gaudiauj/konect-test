@@ -23,4 +23,12 @@ describe.concurrent("konnect email validator", () => {
     fireEvent.change(numbersInput[0], { target: { value: "23" } });
     expect(numbersInput[0].value).toBe("3");
   });
+
+  it("should focus the next input when we enter a digit", () => {
+    render(<App />);
+    const numbersInput: HTMLInputElement[] =
+      screen.getAllByPlaceholderText("•");
+    fireEvent.change(numbersInput[0], { target: { value: "1" } });
+    expect(numbersInput[1]).toHaveFocus();
+  });
 });
