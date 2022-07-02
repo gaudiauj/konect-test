@@ -39,12 +39,23 @@ function App() {
   function onNumberChange(value: string, index: number) {
     dispatch({ type: "changeValue", value, indexToChange: index });
   }
+  function handleKeyDown(evt: React.KeyboardEvent<HTMLFormElement>) {
+    if (evt.code === "Backspace") {
+      dispatch({
+        type: "changeValue",
+        value: "",
+        indexToChange: state.numbers[state.currentFocus]
+          ? state.currentFocus
+          : state.currentFocus - 1,
+      });
+    }
+  }
   return (
     <>
       <header className={`${css.header}`}>
         <h1>Konect test</h1>
       </header>
-      <form className={`${css.form}`}>
+      <form className={`${css.form}`} onKeyDown={handleKeyDown}>
         {state.numbers.map((number, index) => (
           <NumberInput
             ref={inputRefArray[index]}
@@ -60,6 +71,28 @@ function App() {
 }
 
 function reducer(state: State, action: Action) {
+  const getNextFocus = () => {
+    const numbersLength = state.numbers.length;
+    const currentFocus = state.currentFocus;
+    const value = action.value;
+
+    if (currentFocus === 0 && !value) {
+      return 0;
+    }
+    if (currentFocus === numbersLength - 1 && !!value) {
+      return currentFocus;
+    }
+    if (!value && !state.numbers[state.currentFocus]) {
+      return currentFocus - 1;
+    }
+    if (!value && currentFocus === numbersLength - 1) {
+      return currentFocus;
+    }
+    if (!!value) {
+      return currentFocus + 1;
+    }
+    return currentFocus - 1;
+  };
   switch (action.type) {
     case "changeValue":
       const newNumbers = [...state.numbers];
@@ -68,7 +101,7 @@ function reducer(state: State, action: Action) {
       return {
         ...state,
         numbers: newNumbers,
-        currentFocus: state.currentFocus + 1,
+        currentFocus: getNextFocus(),
       };
     case "paste":
       return state;
