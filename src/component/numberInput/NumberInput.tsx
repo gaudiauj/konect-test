@@ -10,7 +10,10 @@ type props = {
 const NumberInput = ({ onChange, value, onClick }: props) => {
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     const value = event.target.value;
-    onChange(value);
+    const lastChar = value[value.length - 1];
+    if (/^[0-9]?$/.test(lastChar)) {
+      onChange(lastChar);
+    }
   }
 
   return (
